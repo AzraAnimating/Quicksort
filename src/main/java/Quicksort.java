@@ -1,43 +1,61 @@
 public class Quicksort {
 
-    private final int[] integerArray = {16, 23, 14, 7, 21, 20, 6, 1, 17, 13, 12, 9, 3, 19};
+    private int[] aInternalIntegerArray;//Array mit dem die Methoden arbeiten
 
-    public void quickSort(int[] arr, int low, int high) {
-        if (arr == null || arr.length == 0)
-            return;
+    /**
+     * Wrappermethode zur simplifizierung der benutzung
+     * @param pIntegerArray  Das Array was zu sortieren ist
+     * @return Das sortierte Array wird zurückgegeben
+     */
+    public int[] quickSort(int[] pIntegerArray) {
+        this.aInternalIntegerArray = pIntegerArray;
+        return this.internalQuickSort(0, pIntegerArray.length - 1);
+    }
 
-        if (low >= high)
-            return;
+    /**
+     * Rekursive Implementation von Quicksort
+     * @param pBeginIndex Der Index des 1. Elementes des Arrays
+     * @param pEndIndex Der Index des letzten Elementes des Arrays
+     * @return Rückgabe des sortierten Arrays, an die obere "quickSort" Methode
+     */
+    private int[] internalQuickSort(int pBeginIndex, int pEndIndex) {//Tatsächliche Suchmethode
+        int lPivot;
+        if (pBeginIndex < pEndIndex) {
+            //Piviot auswählen
+            lPivot = this.partition(pBeginIndex, pEndIndex);
+            //Rekursive Aufrufe der Sortiermethode um immer weiter zu unterteilen
+            this.internalQuickSort(pBeginIndex, lPivot);
+            this.internalQuickSort(lPivot + 1, pEndIndex);
+        }
+        return aInternalIntegerArray;
+    }
 
-        // pivot auswählen
-        int middle = low + (high - low) / 2;
-        int pivot = arr[middle];
+    int partition(int pBeginIndex, int pEndIndex) { //Partitionieren / Aufteilen des Arrays
 
-        // links < pivot & rechts > pivot
-        int i = low, j = high;
-        while (i <= j) {
-            while (arr[i] < pivot) {
+        int i; //Counter
+        int j;
+        int x = aInternalIntegerArray[(pBeginIndex + pEndIndex) / 2];
+        i = pBeginIndex - 1;
+        j = pEndIndex + 1;
+
+        boolean returned = false;
+
+        while (true) {
+            do {
                 i++;
-            }
+            } while (aInternalIntegerArray[i] < x);
 
-            while (arr[j] > pivot) {
+            do {
                 j--;
-            }
+            } while (aInternalIntegerArray[j] > x);
 
-            if (i <= j) {
-                int temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
-                i++;
-                j--;
+            if (i < j) {
+                int k = aInternalIntegerArray[i];
+                aInternalIntegerArray[i] = aInternalIntegerArray[j];
+                aInternalIntegerArray[j] = k;
+            } else {
+                return j;
             }
         }
-
-        // rekursiv die beiden unterteile weiter Einteilen und sortieren
-        if (low < j)
-            this.quickSort(arr, low, j);
-
-        if (high > i)
-            this.quickSort(arr, i, high);
     }
 }
